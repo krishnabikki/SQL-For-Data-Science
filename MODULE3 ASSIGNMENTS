@@ -1,0 +1,24 @@
+/*------------Using a subquery, find the names of all the tracks for the album "Californication".-----------*/
+select trackid,name,albumid
+from tracks
+where albumid in
+(select albumid from albums where title='Californication')
+
+/*----------Find the total number of invoices for each customer along with the customer's full name, city and email.----------*/
+select
+     RTRIM(LTRIM(
+         CONCAT(
+             COALESCE(A.FIRSTNAME,+' ','')
+            ,COALESCE(A.LASTNAME,+' ','')
+         )
+     )) AS FULLNAME,
+     A.FIRSTNAME,
+     A.LASTNAME,
+     A.EMAIL,
+     COUNT(B.CUSTOMERID) AS total_invoice
+     FROM CUSTOMERS A
+     INNER JOIN 
+     INVOICES b
+     ON
+     A.CUSTMOERID = B.CUSTMOERID
+     GROUP BY A.CUSTOMERID
