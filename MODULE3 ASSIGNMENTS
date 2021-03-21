@@ -1,10 +1,21 @@
-/*------------Using a subquery, find the names of all the tracks for the album "Californication".-----------*/
+/****FROM BELOW CODES WE WILL GET A CHANCE TO LEARN BELOW TOPICS
+1) HOW TO COMBINE TABLES WITH JOINS
+2) JOINS - INNER,LEFT,SELF
+3) HOW TO APLLY FILTERS AND RETRIVE DATA AFTER JOINS
+4) HOW TO USE UNION 
+5) HOW TO USE RTRIM,LTRIM TO REMOVE SPACES
+6) COALESCE TO REPLACE NULL WITH EMPTY STRINGS
+7) HOW TO CONCACT TWO STRINGS        *********/
+
+
+
+/*------------Q1.Using a subquery, find the names of all the tracks for the album "Californication".-----------*/
 select trackid,name,albumid
 from tracks
 where albumid in
 (select albumid from albums where title='Californication')
 
-/*----------Find the total number of invoices for each customer along with the customer's full name, city and email.----------*/
+/*----------Q2.Find the total number of invoices for each customer along with the customer's full name, city and email.----------*/
 select
      RTRIM(LTRIM(
          CONCAT(
@@ -22,3 +33,57 @@ select
      ON
      A.CUSTMOERID = B.CUSTMOERID
      GROUP BY A.CUSTOMERID
+
+/******Q3.Retrieve the track name, album, artistID, and trackID for all the albums.**********/
+select a.title,
+       a.artistid,
+       a.albumid,
+       b.trackid,
+       b.name
+    from albums a
+ left join 
+        tracks b
+    where a.albumid = b.albumid 
+    
+ /********Q4.Retrieve a list with the managers last name, and the last name of the employees who report to him or her.*******/
+ select a.lastname as manager,
+       b.lastname as employee
+  from employees a
+    inner join 
+  employees b
+  on 
+  a.reportsto = b.employeeid
+  
+/******2ND APPROACH IS USE SELF JOIN *********/
+   select a.lastname as manager,
+       b.lastname as employee
+  from employees a,employees b
+  where a.reportsto = b.employeeid
+  
+/*******Q5.Find the name and ID of the artists who do not have albums. ******/
+SELECT A.NAME,
+       B.TITLE
+    FROM ARTISTS A
+    LEFT JOIN    
+    ALBUMS B
+    ON A.ARTISTID = B.ARTISTID
+    WHERE B.TITLE ISNULL
+    
+/******Q6.Use a UNION to create a list of all the employee's and customer's first names and last names ordered by the last name in descending order.*****/
+SELECT FIRSTNAME,LASTNAME FROM EMPLOYEES
+UNION
+SELECT FIRSTNAME,LASTNAME FROM CUSTOMERS
+ORDER BY LASTNAME DESC
+
+/*****Q7.See if there are any customers who have a different city listed in their billing city versus their customer city.******/
+SELECT A.CUSTOMERID,
+       A.CITY,
+       B.BILLINGCITY
+    FROM CUSTOMERS A
+    INNER JOIN INVOICES B
+    ON A.CUSTOMERID = B.CUSTOMERID
+    WHERE A.CITY <> B.BILLINGCITY   
+  
+
+    
+    
